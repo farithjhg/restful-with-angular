@@ -2,11 +2,14 @@ package com.wolfsoft.test.client;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.wolfsoft.hr.entity.Regions;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
@@ -23,13 +26,12 @@ public class RegionRestServiceTest {
 
     @Before
     public void startServer() throws IOException {
-        serverProvider.createServer();
         webService = clientProvider.getWebResource();
     }
 
     @After
     public void stopServer() {
-        serverProvider.stop();
+        
     }
 
 
@@ -110,7 +112,7 @@ public class RegionRestServiceTest {
         ClientResponse resp = webService.path("web").path("users")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON)
-                .post(ClientResponse.class, new User());
+                .post(ClientResponse.class, new Regions());
 
         System.out.println("Got stuff: " + resp);
         String actual = resp.getEntity(String.class);
@@ -122,10 +124,10 @@ public class RegionRestServiceTest {
     @Test
     public void testUpdateUserShouldReturnUpdatedUser() throws IOException {
 
-        User updateUser = new User();
-        updateUser.setId(1);
-        updateUser.setFirstName("XX");
-        updateUser.setLastName("YY");
+    	Regions updateUser = new Regions();
+//        updateUser.setId(1);
+//        updateUser.setFirstName("XX");
+//        updateUser.setLastName("YY");
 
         ClientResponse resp = webService.path("web").path("users/1")
                 .type(MediaType.APPLICATION_JSON_TYPE)
