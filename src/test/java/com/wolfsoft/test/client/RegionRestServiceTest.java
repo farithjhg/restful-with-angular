@@ -12,12 +12,12 @@ import java.io.IOException;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-public class UserRestServiceTest {
+public class RegionRestServiceTest {
 
     private final ClientProvider clientProvider;
     private WebResource webService;
 
-    public UserRestServiceTest() {
+    public RegionRestServiceTest() {
         clientProvider = new ClientProvider();
     }
 
