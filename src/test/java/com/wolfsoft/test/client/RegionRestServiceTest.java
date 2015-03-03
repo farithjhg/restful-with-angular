@@ -4,6 +4,9 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.wolfsoft.hr.entity.Regions;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +17,7 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 public class RegionRestServiceTest {
 
@@ -36,8 +40,8 @@ public class RegionRestServiceTest {
 
 
     @Test
-    public void testGetAllUsersShouldReturnSuccessStatus() throws IOException {
-        ClientResponse resp = webService.path("web").path("users")
+    public void testGetAllRegionsShouldReturnSuccessStatus() throws IOException {
+        ClientResponse resp = webService.path("getAllRegions")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(ClientResponse.class);
         System.out.println("Got stuff: " + resp);
@@ -46,36 +50,34 @@ public class RegionRestServiceTest {
     }
 
     @Test
-    public void testGetAllUsersShouldReturnJSArray() throws IOException {
-        ClientResponse resp = webService.path("web").path("users")
+    public void testGetAllRegionsShouldReturnJSArray() throws IOException {
+        ClientResponse resp = webService.path("getAllRegions")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(ClientResponse.class);
         System.out.println("Got stuff: " + resp);
         String actual = resp.getEntity(String.class);
-
+        JSONArray array = null;
+        JSONObject obj = null;
+        try {
+			array = new JSONArray(actual);
+			for (int i = 0; i < array.length(); i++) {
+				obj = array.getJSONObject(i);
+				System.out.println("Object "+(i+1)+"/"+array.length()+": "+obj.toString());
+				System.out.println("regionId: "+obj.get("regionId"));
+				System.out.println("regionName: "+obj.get("regionName"));
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         assertTrue("Result must be a JavaScript array: But it starts with '{'!", !actual.startsWith("{"));
         assertTrue("Result must be a JavaScript array: But it does not start with '['!", actual.startsWith("["));
     }
 
     @Test
-    public void testGetAllUsersShouldReturnUsers() throws IOException {
-        ClientResponse resp = webService.path("web").path("users")
-                .accept(MediaType.APPLICATION_JSON)
-                .get(ClientResponse.class);
-        System.out.println("Got stuff: " + resp);
-        String actual = resp.getEntity(String.class);
-
-        //[{"id":1,"firstName":"Foo1","lastName":"Bar1"},{"id":2,"firstName":"Foo2","lastName":"Bar2"},{"id":3,"firstName":"Foo3","lastName":"Bar3"},{"id":4,"firstName":"Foo4","lastName":"Bar4"},{"id":5,"firstName":"Foo5","lastName":"Bar5"},{"id":6,"firstName":"Foo6","lastName":"Bar6"},{"id":7,"firstName":"Foo7","lastName":"Bar7"},{"id":8,"firstName":"Foo8","lastName":"Bar8"},{"id":9,"firstName":"Foo9","lastName":"Bar9"},{"id":10,"firstName":"Foo10","lastName":"Bar10"}]
-        String expectedUser1 = "{\"id\":1,\"firstName\":\"Foo1\",\"lastName\":\"Bar1\"}";
-        String expectedUser10 = "{\"id\":10,\"firstName\":\"Foo10\",\"lastName\":\"Bar10\"}";
-
-        assertTrue(actual.contains(expectedUser1));
-        assertTrue(actual.contains(expectedUser10));
-    }
-
-    @Test
-    public void testGetUserByIdShouldReturnSuccessStatus() throws IOException {
-        ClientResponse resp = webService.path("web").path("users/1")
+    public void testGetRegionByIdShouldReturnSuccessStatus() throws IOException {
+        ClientResponse resp = webService.path("/1")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(ClientResponse.class);
         System.out.println("Got stuff: " + resp);
@@ -84,110 +86,75 @@ public class RegionRestServiceTest {
     }
 
     @Test
-    public void testGetUserByIdOneShouldReturnFirstUser() throws IOException {
-        ClientResponse resp = webService.path("web").path("users/1")
+    public void testGetRegionByIdOneShouldReturnFirstRegion() throws IOException {
+        ClientResponse resp = webService.path("/1")
                 .accept(MediaType.APPLICATION_JSON)
                 .get(ClientResponse.class);
         System.out.println("Got stuff: " + resp);
         String actual = resp.getEntity(String.class);
-        String expectedUser1 = "{\"id\":1,\"firstName\":\"Foo1\",\"lastName\":\"Bar1\"}";
-
-        assertTrue(actual.equals(expectedUser1));
+        JSONObject obj = null;
+        try {
+			obj = new JSONObject(actual);
+			System.out.println("Object: "+obj.toString());
+	        assertNotNull(obj);
+	        assertTrue(obj.getString("regionId").equals("1"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}        
     }
 
     @Test
-    public void testCreateUserShouldReturnNewUserWithCorrectId() throws IOException {
-        /*
-              $ curl -i -X POST -H 'Content-Type: application/json' -d '{"id":0, "firstName":"XX", "lastName":"YY"}' http://localhost:8080/ngdemo/web/users
-
-                HTTP/1.1 200 OK
-                Server: Apache-Coyote/1.1
-                Content-Type: application/json
-                Transfer-Encoding: chunked
-                Date: Mon, 22 Jul 2013 09:12:38 GMT
-
-                {"id":12,"firstName":"XX","lastName":"YY"}
-         */
-
-        ClientResponse resp = webService.path("web").path("users")
+    public void testCreateRegionShouldReturnNewRegionWithCorrectId() throws IOException {
+    	Regions region = new Regions();
+    	region.setRegionId(8);
+    	region.setRegionName("Regions");
+        ClientResponse resp = webService.path("")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON)
-                .post(ClientResponse.class, new Regions());
+                .post(ClientResponse.class, region);
 
         System.out.println("Got stuff: " + resp);
         String actual = resp.getEntity(String.class);
-        String expectedId = "\"id\":11";
+        String expectedId = "\"regionId\":8";
 
         assertTrue(actual.contains(expectedId));
     }
 
     @Test
-    public void testUpdateUserShouldReturnUpdatedUser() throws IOException {
+    public void testUpdateRegionShouldReturnUpdatedRegion() throws IOException {
 
-    	Regions updateUser = new Regions();
-//        updateUser.setId(1);
-//        updateUser.setFirstName("XX");
-//        updateUser.setLastName("YY");
+    	Regions updateRegion = new Regions();
+    	updateRegion.setRegionId(8);
+    	updateRegion.setRegionName("Regions");
 
-        ClientResponse resp = webService.path("web").path("users/1")
+        ClientResponse resp = webService.path("/8")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON)
-                .put(ClientResponse.class, updateUser);
+                .put(ClientResponse.class, updateRegion);
 
         System.out.println("Got stuff: " + resp);
         String actual = resp.getEntity(String.class);
-        String expectedId = "\"id\":1";
-        String expectedFirstNam = "\"firstName\":\"XX\"";
-        String expectedLastNam = "\"lastName\":\"YY\"";
+        String expectedId = "\"regionId\":8";
+        String expectedName = "\"regionName\":\"Regions\"";
 
         assertTrue(actual.contains(expectedId));
-        assertTrue(actual.contains(expectedFirstNam));
-        assertTrue(actual.contains(expectedLastNam));
+        assertTrue(actual.contains(expectedName));
     }
 
     @Test
-    public void testGetNumberOfUserShouldReturnSuccessStatusAndCorrectNumber() throws IOException {
-
-        String actual = getNumberOfUsers();
-
-        String expectedNumberOfUsers = "10";
-        assertTrue(actual.equals(expectedNumberOfUsers));
-    }
-
-    private String getNumberOfUsers() {
-        ClientResponse resp = webService.path("web").path("users/numberOfUsers")
-                .accept(MediaType.APPLICATION_JSON)
-                .get(ClientResponse.class);
-
-        System.out.println("Got stuff: " + resp);
-        assertEquals(200, resp.getStatus());
-        return resp.getEntity(String.class);
-    }
-
-    @Test
-    public void testRemoveUserShouldReturnSuccessStatus() throws IOException {
-
-        ClientResponse resp = webService.path("web").path("users/1")
+    public void testRemoveRegionShouldReturnSuccessStatus() throws IOException {
+    	
+    	Regions deleteObject = new Regions();
+    	deleteObject.setRegionId(8);
+    	deleteObject.setRegionName("Regions");
+    	
+        ClientResponse resp = webService.path("/8")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON)
-                .delete(ClientResponse.class);
+                .delete(ClientResponse.class, deleteObject);
 
         System.out.println("Got stuff: " + resp);
         assertEquals(204, resp.getStatus());  // 204: no content
     }
-
-    @Test
-    public void testRemoveUserShouldDecreaseNumberOfUsersByOne() throws IOException {
-
-        int numberOfUsersBefore = Integer.parseInt(getNumberOfUsers());
-
-        webService.path("web").path("users/1")
-                .type(MediaType.APPLICATION_JSON_TYPE)
-                .accept(MediaType.APPLICATION_JSON)
-                .delete(ClientResponse.class);
-
-        int numberOfUsersAfter = Integer.parseInt(getNumberOfUsers());
-
-        assertTrue(numberOfUsersAfter == numberOfUsersBefore - 1);
-    }
+    
 }

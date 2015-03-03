@@ -5,7 +5,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class ClientProvider {
-	private static final String URL="";
+	private static final String URL="http://localhost:8080/restful-with-angular/rest/regions";
     public ClientProvider() {
     }
 
