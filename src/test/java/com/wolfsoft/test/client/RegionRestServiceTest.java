@@ -106,8 +106,8 @@ public class RegionRestServiceTest {
     @Test
     public void testCreateRegionShouldReturnNewRegionWithCorrectId() throws IOException {
     	Regions region = new Regions();
-    	region.setRegionId(8);
-    	region.setRegionName("Regions");
+    	region.setRegionId(3);
+    	region.setRegionName("Asia");
         ClientResponse resp = webService.path("")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON)
@@ -115,7 +115,7 @@ public class RegionRestServiceTest {
 
         System.out.println("Got stuff: " + resp);
         String actual = resp.getEntity(String.class);
-        String expectedId = "\"regionId\":8";
+        String expectedId = "\"regionId\":3";
 
         assertTrue(actual.contains(expectedId));
     }
@@ -151,7 +151,7 @@ public class RegionRestServiceTest {
         ClientResponse resp = webService.path("/8")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON)
-                .delete(ClientResponse.class, deleteObject);
+                .delete(ClientResponse.class);
 
         System.out.println("Got stuff: " + resp);
         assertEquals(204, resp.getStatus());  // 204: no content
