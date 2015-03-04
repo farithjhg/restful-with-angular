@@ -2,26 +2,25 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Regions</title>
 </head>
 <body>
-<a ui-sref="newRegion" class="btn-primary btn-lg nodecoration">Add New Region</a>
- 
 <table class="table regiontable">
   <tr>
-    <td colspan="3"><h3>All Regions</h3></td>
+    <td colspan="2"><h3>All Regions</h3></td>
+    <td><a href="#/newRegion" class="btn btn-primary">Add New Region</a></td>
   </tr>
   <tr>
     <td>Id</td>
     <td>Name</td>
-    <td>Action</td>
+    <td>&nbsp</td>
   </tr>
   <tr ng-repeat="region in regions">
     <td>{{region.regionId}}</td>
     <td>{{region.regionName}}</td>
     <td>
       <a class="btn btn-primary" ui-sref="viewRegion({id:region.regionId})">View</a>
-      <a class="btn btn-danger"  ng-click="deleteRegion(region)">Delete</a>
+      <a class="btn btn-danger"  ng-click="deleteRegion(region.regionId)">Delete</a>
     </td>
   </tr>
 </table>
