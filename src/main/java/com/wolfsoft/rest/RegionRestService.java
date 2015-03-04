@@ -20,7 +20,6 @@ public class RegionRestService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("getAllRegions")
     public List<Regions> getAllRegionsInJSON() {
         return regionService.findAll();
     }
@@ -47,11 +46,11 @@ public class RegionRestService {
         return regionService.save(region);
     }
 
+
     @DELETE
     @Path("{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void remove(Regions region) {
-        regionService.delete(region);
-    }
+    public void remove(@PathParam("id") int id) {
+    	regionService.delete(regionService.findByPK(id));
+    }    
 }
