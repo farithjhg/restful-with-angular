@@ -1,20 +1,19 @@
 'use strict';
-
 /* Services */
 
-var services = angular.module('hrApp.services', []);
+var services = angular.module('hrServices', ['ngResource']);
 
-services.factory('RegionsFactory', function ($resource) {
-    return $resource('/rest/regions/getAllRegions', {}, {
+services.factory('HrFactory', function ($resource) {
+    return $resource('/restful-with-angular/rest/regions', {}, {
         query: { method: 'GET', isArray: true },
         create: { method: 'POST' }
     })
 });
 
-services.factory('RegionFactory', function ($resource) {
-    return $resource('/rest/regions/:id', {}, {
+services.factory('HrFactory', function ($resource) {
+    return $resource('/restful-with-angular/rest/regions:id', {}, {
         show: { method: 'GET' },
         update: { method: 'PUT', params: {id: '@id'} },
-        delete: { method: 'DELETE', params: {id: '@id'} }
+        deleteRow: { method: 'DELETE', params: {id: '@id'} }
     })
 });

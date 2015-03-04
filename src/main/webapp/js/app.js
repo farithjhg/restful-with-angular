@@ -1,23 +1,92 @@
-angular.module('hrApp', ['ui.router', 'ngResource', 'hrApp.controllers', 'hrApp.services']);
- 
-angular.module('hrApp').config(function($stateProvider) {
-  $stateProvider.state('regions', { // state for showing all movies
-    url: '/rest/regions/getAllRegions',
-    templateUrl: 'view/regions.html',
-    controller: 'RegionListController'
-  }).state('viewMovie', { //state for showing single movie
-    url: '/rest/regions/:id/view',
-    templateUrl: 'view/movie-view.html',
-    controller: 'MovieViewController'
-  }).state('newMovie', { //state for adding a new movie
-    url: '/regions/new',
-    templateUrl: 'view/movie-add.html',
-    controller: 'MovieCreateController'
-  }).state('editMovie', { //state for updating a movie
-    url: '/movies/:id/edit',
-    templateUrl: 'view/movie-edit.html',
-    controller: 'MovieEditController'
-  });
-}).run(function($state) {
-  $state.go('movies'); //make a transition to movies state when app starts
+(function(angular) {
+  'use strict';
+    
+var myApp = angular.module('myApp',['ngRoute', 'ngResource']);
+
+myApp.controller('myController', function ($scope, $http){
+	$http.get('http://localhost:8080/restful-with-angular/rest/regions').
+    success(function(data) {
+        $scope.regions = data;
+    }).error(function(data, status) {
+        console.log("Request failed " + status);
+    });
+	
+	$scope.custumers = [
+    {'name': 'John Doe', 'city': 'San Francisco'},
+    {'name': 'Jane Doe', 'city': 'Phoenix'},
+    {'name': 'John Smit', 'city': 'New York'}
+  ];
+  
+  $scope.addCustomer = function(){
+	  $scope.custumers.push(
+			  {
+				  name: $scope.newCustomer.name, 
+				  city: $scope.newCustomer.city}
+			  );
+  };
+  
 });
+
+myApp.factory('HrFactory', function ($resource) {
+    return $resource('/restful-with-angular/rest/regions', {}, {
+        query: { method: 'GET', isArray: true },
+        create: { method: 'POST' }
+    })
+});
+
+myApp.factory('HrFactory', function ($resource) {
+    return $resource('/restful-with-angular/rest/regions/:id', {}, {
+        show: { method: 'GET' },
+        update: { method: 'PUT', params: {id: '@id'} },
+        deleteRow: { method: 'DELETE', params: {id: '@id'} }
+    })
+});
+
+myApp.controller('hrController', ['$scope','$location','HrFactory', 
+                                  function ($scope, $location, HrFactory){
+	
+	$scope.regions = HrFactory.query();
+
+	// callback for ng-click 'deleteUser':
+    $scope.deleteRegion = function (regionId) {
+    	HrFactory.deleteRow({ id: regionId });
+    	$scope.regions = HrFactory.query();
+    	$location.path('/regions');
+    };
+	
+}]);
+
+myApp.controller('RegionCreateController', ['$scope','$location','HrFactory', 
+                                  function ($scope, $location, HrFactory){
+	
+	$scope.saveNewRegion = function(){
+		HrFactory.create($scope.region);
+		$scope.regions = HrFactory.query();
+        $location.path('/regions');
+	};
+  
+}]);
+
+
+myApp.config(function($routeProvider) {
+    $routeProvider
+	    .when('/regions', {
+	        controller: 'hrController',
+	        templateUrl: 'view/regions.html'
+	    })
+	    .when('/newRegion', {
+	        controller: 'RegionCreateController',
+	        templateUrl: 'view/newRegion.html'
+	    })
+        .when('/view1', {
+            controller: 'myController',
+            templateUrl: 'Partials/view1.html'
+        })
+        .when('/view2', {
+            controller: 'myController',
+            templateUrl: 'Partials/view2.html'
+        })
+        .otherwise({redirectTo: '/regions'});
+});
+    
+})(window.angular);
