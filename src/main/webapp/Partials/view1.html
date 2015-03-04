@@ -1,0 +1,14 @@
+<html>
+<head>
+</head>
+<body>
+<h1>VIEW1</h1>
+Name: <input type="text" ng-model="name" />
+  <ul>
+    <li ng-repeat="custumer in custumers | filter:name | orderBy:'city'">
+      {{custumer.name | uppercase}} - {{custumer.city | lowercase}}
+    </li>
+  </ul>
+
+</body>
+</html>
