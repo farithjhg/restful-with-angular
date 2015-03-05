@@ -5,17 +5,25 @@
 <title>Regions</title>
 </head>
 <body>
-<table class="table regiontable">
-  <tr>
-    <td colspan="2"><h3>All Regions</h3></td>
-    <td><a ng-click="createNewRegion()" class="btn btn-primary">Add New Region</a></td>
-  </tr>
-  <tr>
+<div class="form-horizontal">
+ <label for="filter">Find By:</label>
+ <input type="text" size="400px;" id="filter" ng-model="filter.value" placeholder="Id or Name">
+</div>
+<div>
+	<div style="float: left;">
+		<h3>All Regions</h3>
+	</div>
+	<div style="float: right;">
+		<a ng-click="createNewRegion()" class="btn btn-primary">Add New Region</a>
+	</div>
+</div>
+<table class="table table-striped">
+  <tr style="font-weight:bold;">
     <td>Id</td>
     <td>Name</td>
-    <td>&nbsp</td>
+    <td>Actions</td>
   </tr>
-  <tr ng-repeat="region in regions">
+  <tr ng-repeat="region in regions | filter:filter.value | orderBy:regionId">
     <td>{{region.regionId}}</td>
     <td>{{region.regionName}}</td>
     <td>
