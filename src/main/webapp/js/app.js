@@ -27,6 +27,13 @@ myApp.controller('myController', function ($scope, $http){
   
 });
 
+myApp.service('popupService',function($window){
+    this.showPopup=function(message){
+    	//return $dialogs.confirm('Please Confirm',message);
+        return $window.confirm(message);
+    }
+});
+
 myApp.factory('RegionsFactory', function ($resource) {
     return $resource('/restful-with-angular/rest/regions', {}, {
         query: { method: 'GET', isArray: true },
@@ -37,13 +44,13 @@ myApp.factory('RegionsFactory', function ($resource) {
 myApp.factory('RegionFactory', function ($resource) {
     return $resource('/restful-with-angular/rest/regions/:id', {}, {
         show: { method: 'GET' },
-        updateRow: { method: 'PUT', params: {id: '@id'} },
+        updateRow: { method: 'PUT'},
         deleteRow: { method: 'DELETE', params: {id: '@id'} }
     })
 });
 
-myApp.controller('hrController', ['$scope','$location','RegionFactory', 'RegionsFactory',
-                                  function ($scope, $location, RegionFactory, RegionsFactory){
+myApp.controller('hrController', ['$scope','$location','RegionFactory', 'RegionsFactory','popupService','$window',
+                                  function ($scope, $location, RegionFactory, RegionsFactory, popupService, $window){
 	// callback for ng-click 'editUser':
     $scope.editRegion = function (regionId) {
         $location.path('/region-detail/' + regionId);
@@ -51,8 +58,10 @@ myApp.controller('hrController', ['$scope','$location','RegionFactory', 'Regions
 	
 	// callback for ng-click 'deleteUser':
     $scope.deleteRegion = function (regionId) {
-    	RegionFactory.deleteRow({ id: regionId });
-    	$scope.regions = RegionsFactory.query();
+    	if (popupService.showPopup('Really delete this?')) {
+        	RegionFactory.deleteRow({ id: regionId });
+        	$window.location.href = ''; //redirect to home
+	     }    	
     };
     
     // callback for ng-click 'createNewRegion':
@@ -95,7 +104,15 @@ myApp.config(function($routeProvider) {
     $routeProvider
 	    .when('/regions', {
 	        controller: 'hrController',
-	        templateUrl: 'view/regions.html'
+	        templateUrl: 'view/regions.html',
+        	resolve: {
+        	      // I will cause a 1 second delay
+        	      delay: function($q, $timeout) {
+        	        var delay = $q.defer();
+        	        $timeout(delay.resolve, 500);
+        	        return delay.promise;
+        	      }
+        	}
 	    })
 	    .when('/newRegion', {
 	        controller: 'RegionCreateController',

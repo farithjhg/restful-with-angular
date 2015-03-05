@@ -3,17 +3,23 @@
 
 var services = angular.module('hrServices', ['ngResource']);
 
-services.factory('HrFactory', function ($resource) {
+services.service('popupService',function($window){
+    this.showPopup=function(message){
+        return $window.confirm(message);
+    }
+});
+
+services.factory('RegionsFactory', function ($resource) {
     return $resource('/restful-with-angular/rest/regions', {}, {
         query: { method: 'GET', isArray: true },
         create: { method: 'POST' }
     })
 });
 
-services.factory('HrFactory', function ($resource) {
-    return $resource('/restful-with-angular/rest/regions:id', {}, {
+services.factory('RegionFactory', function ($resource) {
+    return $resource('/restful-with-angular/rest/regions/:id', {}, {
         show: { method: 'GET' },
-        update: { method: 'PUT', params: {id: '@id'} },
+        updateRow: { method: 'PUT'},
         deleteRow: { method: 'DELETE', params: {id: '@id'} }
     })
 });
