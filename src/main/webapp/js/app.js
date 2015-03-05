@@ -27,46 +27,69 @@ myApp.controller('myController', function ($scope, $http){
   
 });
 
-myApp.factory('HrFactory', function ($resource) {
+myApp.factory('RegionsFactory', function ($resource) {
     return $resource('/restful-with-angular/rest/regions', {}, {
         query: { method: 'GET', isArray: true },
         create: { method: 'POST' }
     })
 });
 
-myApp.factory('HrFactory', function ($resource) {
+myApp.factory('RegionFactory', function ($resource) {
     return $resource('/restful-with-angular/rest/regions/:id', {}, {
         show: { method: 'GET' },
-        update: { method: 'PUT', params: {id: '@id'} },
+        updateRow: { method: 'PUT', params: {id: '@id'} },
         deleteRow: { method: 'DELETE', params: {id: '@id'} }
     })
 });
 
-myApp.controller('hrController', ['$scope','$location','HrFactory', 
-                                  function ($scope, $location, HrFactory){
+myApp.controller('hrController', ['$scope','$location','RegionFactory', 'RegionsFactory',
+                                  function ($scope, $location, RegionFactory, RegionsFactory){
+	// callback for ng-click 'editUser':
+    $scope.editRegion = function (regionId) {
+        $location.path('/region-detail/' + regionId);
+    };	
 	
-	$scope.regions = HrFactory.query();
-
 	// callback for ng-click 'deleteUser':
     $scope.deleteRegion = function (regionId) {
-    	HrFactory.deleteRow({ id: regionId });
-    	$scope.regions = HrFactory.query();
-    	$location.path('/regions');
+    	RegionFactory.deleteRow({ id: regionId });
+    	$scope.regions = RegionsFactory.query();
     };
+    
+    // callback for ng-click 'createNewRegion':
+    $scope.createNewRegion = function () {
+        $location.path('/newRegion');
+    };  
 	
+	$scope.regions = RegionsFactory.query();
 }]);
 
-myApp.controller('RegionCreateController', ['$scope','$location','HrFactory', 
-                                  function ($scope, $location, HrFactory){
-	
-	$scope.saveNewRegion = function(){
-		HrFactory.create($scope.region);
-		$scope.regions = HrFactory.query();
-        $location.path('/regions');
+myApp.controller('RegionCreateController', ['$scope','RegionsFactory', '$location', 
+                  function ($scope, RegionsFactory, $location){
+	// callback for ng-click 'saveNewRegion':
+	$scope.saveNewRegion = function() {
+		RegionsFactory.create($scope.region);
+		$scope.regions = RegionsFactory.query();
+        $location.path('#/regions');
 	};
   
 }]);
 
+myApp.controller('RegionEditController', ['$scope', '$routeParams', 'RegionFactory', '$location',
+                  function ($scope, $routeParams, RegionFactory, $location) {
+
+      // callback for ng-click 'updateRegions':
+      $scope.updateRegions = function () {
+    	  RegionFactory.updateRow($scope.region);
+          $location.path('#/regions');
+      };
+
+      // callback for ng-click 'cancel':
+      $scope.cancel = function () {
+          $location.path('#/regions');
+      };
+
+      $scope.region = RegionFactory.show({id: $routeParams.id});
+ }]);
 
 myApp.config(function($routeProvider) {
     $routeProvider
@@ -78,6 +101,10 @@ myApp.config(function($routeProvider) {
 	        controller: 'RegionCreateController',
 	        templateUrl: 'view/newRegion.html'
 	    })
+	    .when('/region-detail/:id', {
+	        controller: 'RegionEditController',
+	        templateUrl: 'view/region-detail.html'
+	    })	    
         .when('/view1', {
             controller: 'myController',
             templateUrl: 'Partials/view1.html'

@@ -8,7 +8,7 @@
 <table class="table regiontable">
   <tr>
     <td colspan="2"><h3>All Regions</h3></td>
-    <td><a href="#/newRegion" class="btn btn-primary">Add New Region</a></td>
+    <td><a ng-click="createNewRegion()" class="btn btn-primary">Add New Region</a></td>
   </tr>
   <tr>
     <td>Id</td>
@@ -19,8 +19,8 @@
     <td>{{region.regionId}}</td>
     <td>{{region.regionName}}</td>
     <td>
-      <a class="btn btn-primary" ui-sref="viewRegion({id:region.regionId})">View</a>
-      <a class="btn btn-danger"  ng-click="deleteRegion(region.regionId)">Delete</a>
+      <a ng-click="editRegion(region.regionId)" class="btn btn-small btn-primary">Edit</a>
+      <a ng-click="deleteRegion(region.regionId)" class="btn btn-small btn-danger">Delete</a>
     </td>
   </tr>
 </table>

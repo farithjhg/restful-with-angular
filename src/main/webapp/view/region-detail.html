@@ -1,25 +1,24 @@
 <div class="container">
-    <h1>User detail</h1>
+    <h1>Region detail</h1>
 
     <form novalidate="novalidate" class="form-horizontal">
-        <div class="control-group">
-            <label class="control-label" for="inputFirstName">First name:</label>
-
+         <div class="control-group">
+            <label class="control-label" for="regionId">Region Id:</label>
             <div class="controls">
-                <input type="text" id="inputFirstName" ng-model="user.firstName"/>
+                <input type="text" id="regionId" ng-model="region.regionId" placeholder="Region Id" readonly="readonly"/>
             </div>
         </div>
         <div class="control-group">
-            <label class="control-label" for="inputLastName">Last name:</label>
+            <label class="control-label" for="regionName">Region name:</label>
 
             <div class="controls">
-                <input type="text" id="inputLastName" ng-model="user.lastName"/>
+                <input type="text" id="regionName" ng-model="region.regionName" placeholder="Region name"/>
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <a ng-click="cancel()" class="btn btn-small">cancel</a>
-                <a ng-click="updateUser()" class="btn btn-small btn-primary">update user</a>
+                <a ng-click="cancel()" class="btn btn-small">Cancel</a>
+                <a ng-click="updateRegions()" class="btn btn-small btn-primary">Update</a>
             </div>
         </div>
     </form>

@@ -34,7 +34,7 @@ public class RegionRestService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Regions create(Regions region) {
+    public Regions save(Regions region) {
         return regionService.save(region);
     }
 
