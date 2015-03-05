@@ -124,18 +124,18 @@ public class RegionRestServiceTest {
     public void testUpdateRegionShouldReturnUpdatedRegion() throws IOException {
 
     	Regions updateRegion = new Regions();
-    	updateRegion.setRegionId(8);
-    	updateRegion.setRegionName("Regions");
+    	updateRegion.setRegionId(3);
+    	updateRegion.setRegionName("ASIA");
 
-        ClientResponse resp = webService.path("/8")
+        ClientResponse resp = webService.path("")
                 .type(MediaType.APPLICATION_JSON_TYPE)
                 .accept(MediaType.APPLICATION_JSON)
                 .put(ClientResponse.class, updateRegion);
 
         System.out.println("Got stuff: " + resp);
         String actual = resp.getEntity(String.class);
-        String expectedId = "\"regionId\":8";
-        String expectedName = "\"regionName\":\"Regions\"";
+        String expectedId = "\"regionId\":3";
+        String expectedName = "\"regionName\":\"ASIA\"";
 
         assertTrue(actual.contains(expectedId));
         assertTrue(actual.contains(expectedName));
