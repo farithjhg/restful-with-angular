@@ -1,7 +1,7 @@
 'use strict';
 /* Services */
 
-var services = angular.module('hrServices', ['ngResource']);
+var services = angular.module('myApp.services', ['ngResource']);
 
 services.service('popupService',function($window){
     this.showPopup=function(message){
